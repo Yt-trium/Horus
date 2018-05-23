@@ -33,7 +33,7 @@ input_shape = (dataset_image_size_x, dataset_image_size_y, dataset_image_size_z,
 
 model = Sequential()
 
-model.add(Conv3D(32, (3, 3, 3), activation='relu', padding='same', input_shape=(32, 32, 32, 1)))
+model.add(Conv3D(32, (3, 3, 3), activation='relu', padding='same', input_shape=(dataset_image_size_x, dataset_image_size_y, dataset_image_size_z, 1)))
 model.add(BatchNormalization())
 model.add(Conv3D(32, (3, 3, 3), activation='relu', padding='same'))
 model.add(BatchNormalization())
