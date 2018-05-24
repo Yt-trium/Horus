@@ -1,9 +1,8 @@
-from keras import Sequential, Input
-from keras.layers import Dense, MaxPooling3D, Conv3D, Flatten, Dropout, Activation, BatchNormalization, UpSampling3D
-from keras.optimizers import SGD
-from keras.utils import np_utils
+from keras import Sequential
+from keras.utils import plot_model
 
 from Horus.configuration import *
+from Horus.models import *
 import os
 import nibabel as nib
 import numpy as np
@@ -31,49 +30,15 @@ mra_train = mra.reshape(mra.shape[0], dataset_image_size_x, dataset_image_size_y
 
 input_shape = (dataset_image_size_x, dataset_image_size_y, dataset_image_size_z, 1)
 
-model = Sequential()
+model = model1()
 
-model.add(Conv3D(32, (3, 3, 3), activation='relu', padding='same', input_shape=(dataset_image_size_x, dataset_image_size_y, dataset_image_size_z, 1)))
-model.add(BatchNormalization())
-model.add(Conv3D(32, (3, 3, 3), activation='relu', padding='same'))
-model.add(BatchNormalization())
-model.add(MaxPooling3D((2, 2, 2)))
-
-model.add(Conv3D(64, (3, 3, 3), activation='relu', padding='same'))
-model.add(BatchNormalization())
-model.add(Conv3D(64, (3, 3, 3), activation='relu', padding='same'))
-model.add(BatchNormalization())
-model.add(UpSampling3D((2, 2, 2)))
-model.add(MaxPooling3D((2, 2, 2)))
-
-model.add(Conv3D(32, (3, 3, 3), activation='relu', padding='same'))
-model.add(BatchNormalization())
-model.add(UpSampling3D((2, 2, 2)))
-model.add(Conv3D(32, (3, 3, 3), activation='relu', padding='same'))
-model.add(BatchNormalization())
-model.add(Conv3D(32, (3, 3, 3), activation='relu', padding='same'))
-model.add(BatchNormalization())
-model.add(MaxPooling3D((2, 2, 2)))
-
-# model.add(Flatten())
-# model.add(Dense(128, activation="relu", kernel_initializer="normal"))
-# model.add(Dropout(0.5))
-# model.add(Flatten())
-# model.add(Dense(2, kernel_initializer="normal"))
-# model.add(Activation('softmax'))
-
-model.add(UpSampling3D((2, 2, 2)))
-model.add(Conv3D(1, (1, 1, 1), activation='relu', padding='same'))
-model.add(Activation('softmax'))
-
-model.compile(loss='binary_crossentropy', optimizer=SGD())
-# model.compile(loss='binary_crossentropy',optimizer=SGD())
+plot_model(model, to_file='model.png')
 
 model.summary()
 print(model.input_shape)
 print(model.output_shape)
 
-model.fit(gd_train, mra_train, epochs=1, verbose=1)
+model.fit(gd_train, mra_train, epochs=10, verbose=1)
 
 mra_test = np.empty((dataset_training_size, dataset_image_size_x, dataset_image_size_y, dataset_image_size_z))
 for i in range(dataset_training_size, dataset_training_size + dataset_testing_size):
